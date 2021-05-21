@@ -7,6 +7,8 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+cameraControls = new CameraControls;
+
 // Events
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -14,19 +16,6 @@ function onWindowResize() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
-
-document.body.addEventListener("wheel", (e) => {
-    if (e.deltaY > 0) {
-        camera.position.x += 0.04;
-        camera.position.y += 0.04;
-        camera.position.z += 0.04;
-    }
-    else {
-        camera.position.x -= 0.04;
-        camera.position.y -= 0.04;
-        camera.position.z -= 0.04;
-    }
-});
 
 document.body.lastChild.draggable = true;
 
@@ -39,7 +28,6 @@ var azimuth = 0.0;
 var pivot = [0.0, 0.0, 0.0];
 
 var pivotMousePosition = [0, 0];
-var count = 0;
 
 document.body.lastChild.addEventListener("dragstart", (e) => {
     cameraposition = [camera.position.x, camera.position.y, camera.position.z];
@@ -55,6 +43,7 @@ document.body.lastChild.addEventListener("dragstart", (e) => {
 document.body.lastChild.addEventListener("drag", (e) => {
     if(!e.altKey && e.x != 0 && e.y != 0){
         var mousePositionDelta = [e.x - pivotMousePosition[0], pivotMousePosition[1] - e.y];
+        //console.log(e.x - pivotMousePosition[0], pivotMousePosition[1] - e.y);
 
         var newinclination = inclination + (0.005 * mousePositionDelta[0]);
         var newazimuth = azimuth + (0.005 * mousePositionDelta[1]);
@@ -88,14 +77,39 @@ document.body.lastChild.addEventListener("drag", (e) => {
 });
 
 document.body.lastChild.addEventListener("dragend", (e) => {
-    radius = 0.0;
-    azimuth = 0.0;
-    inclination = 0.0;
+    cameraControls.orbit(camera, [0.0, 0.0, 0.0], 1.0);
+});
 
-    pivot = [0.0, 0.0, 0.0];
-    cameraposition = [0.0, 0.0, 0.0];
+document.body.addEventListener("wheel", (e) => {
+    cameraControls.orbit(camera, [0.0, 0.0, 0.0], 1.0);
+    cameraposition = [camera.position.x, camera.position.y, camera.position.z];
 
-    pivotMousePosition = [0, 0];
+    radius = Math.sqrt((pivot[0] - cameraposition[0]) * (pivot[0] - cameraposition[0]) + (pivot[1] - cameraposition[1]) * (pivot[1] - cameraposition[1]) + (pivot[2] - cameraposition[2]) * (pivot[2] - cameraposition[2]));
+    inclination = Math.atan(Math.sqrt((pivot[0] - cameraposition[0]) * (pivot[0] - cameraposition[0]) + (pivot[2] - cameraposition[2]) * (pivot[2] - cameraposition[2])) / cameraposition[1]);
+    azimuth = Math.atan(cameraposition[2] / cameraposition[0]);
+
+    if (e.deltaY < 0) {
+        radius -= 0.1;
+    }
+    else {
+        radius += 0.1;
+    }
+    
+    var newX = radius * Math.sin(inclination) * Math.cos(azimuth);
+    var newZ = radius * Math.sin(inclination) * Math.sin(azimuth); 
+    var newY = radius * Math.cos(inclination);
+
+    camera.position.x = newX;
+    camera.position.y = newY;
+    camera.position.z = newZ;
+
+    camera.lookAt(pivot[0], pivot[1], pivot[2]);
+    
+    document.getElementById("inclination").innerText = (inclination * 180 / Math.PI).toFixed(4);
+    document.getElementById("azimuth").innerText = (azimuth * 180 / Math.PI).toFixed(4);
+    document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
+    document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
+    document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
 });
 
 // Functions
@@ -137,8 +151,10 @@ normals.push(0, 0, 1);
 normals.push(0, 0, 1);
 
 // generate indices
-indices.push(0, 1, 2);
-indices.push(3, 4, 5);
+indices.push(0, 2, 6);
+indices.push(1, 2, 6);
+indices.push(3, 6, 5);
+indices.push(4, 6, 5);
 indices.push(6, 1, 4);
 indices.push(6, 1, 3);
 indices.push(6, 0, 4);
@@ -153,7 +169,7 @@ colors.push(0, 1.0, 1.0);
 colors.push(1.0, 0.0, 1.0);
 colors.push(1.0, 1.0, 0.0);
 
-colors.push(1.0, 1.0, 0.1);
+colors.push(1.0, 1.0, 1.0);
 
 geometry.setIndex(indices);
 geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
@@ -173,19 +189,20 @@ scene.add(mesh);
 scene.add(light);
 
 // Code
-// Setup
-camera.position.z = 1;
-camera.position.x = 1;
-camera.position.y = 1;
-camera.lookAt(0, 0, 0);
+    // Setup
+    camera.position.x = 2;
+    camera.position.y = 1;
+    camera.position.z = 1;
+    camera.lookAt(0, 0, 0);
 
-// Loop
-function Loop() {
-    stats.begin();
+    cameraControls.orbit(camera, [0.0, 0.0, 0.0], 1.0);
+    // Loop
+    function Loop() {
+        stats.begin();
 
-    renderer.render(scene, camera);
-    requestAnimationFrame(Loop);
+        renderer.render(scene, camera);
+        requestAnimationFrame(Loop);
 
-    stats.end();
-}
-Loop();
+        stats.end();
+    }
+    Loop();
