@@ -19,57 +19,29 @@ function onWindowResize() {
 
 document.body.lastChild.draggable = true;
 
-var cameraposition = [0.0, 0.0, 0.0];
-
-var radius = 0.0;
-var inclination = 0.0;
-var azimuth = 0.0;
-
+var count = 0;
 var pivot = [0.0, 0.0, 0.0];
-
 var pivotMousePosition = [0, 0];
 
 document.body.lastChild.addEventListener("dragstart", (e) => {
-    cameraposition = [camera.position.x, camera.position.y, camera.position.z];
-
-    radius = Math.sqrt((pivot[0] - cameraposition[0]) * (pivot[0] - cameraposition[0]) + (pivot[1] - cameraposition[1]) * (pivot[1] - cameraposition[1]) + (pivot[2] - cameraposition[2]) * (pivot[2] - cameraposition[2]));
-    inclination = Math.atan(cameraposition[1] / Math.sqrt((pivot[0] - cameraposition[0]) * (pivot[0] - cameraposition[0]) + (pivot[1] - cameraposition[1]) * (pivot[1] - cameraposition[1]) + (pivot[2] - cameraposition[2]) * (pivot[2] - cameraposition[2])));
-    azimuth = Math.atan(cameraposition[0] / cameraposition[2]);
-
-    pivotMousePosition = [e.x, e.y];
+    count = 0;
     e.dataTransfer.setDragImage(document.getElementById("dragme"), 0, 0);
 });
 
 document.body.lastChild.addEventListener("drag", (e) => {
-    if(!e.altKey && e.x != 0 && e.y != 0){
-        var mousePositionDelta = [e.x - pivotMousePosition[0], pivotMousePosition[1] - e.y];
-        //console.log(e.x - pivotMousePosition[0], pivotMousePosition[1] - e.y);
+    if(count < 1){
+        pivotMousePosition = [e.x, e.y];
+        count++;
+    }
+    if(e.x != 0 && e.y != 0){
+        var mousePositionDelta = [(e.x - pivotMousePosition[0]) * 0.01, (pivotMousePosition[1] - e.y) * 0.01];
+        pivotMousePosition = [e.x, e.y];
 
-        var newinclination = inclination + (0.005 * mousePositionDelta[0]);
-        var newazimuth = azimuth + (0.005 * mousePositionDelta[1]);
-
-        newinclination %= 2 * Math.PI;
-        newazimuth %= 2 * Math.PI;
-
-        if(newazimuth <= 0){
-            newazimuth = 0.00001;
-        }
-        if(newazimuth > Math.PI){
-            newazimuth = Math.PI;
-        }
-
-        var newX = radius * Math.sin(newazimuth) * Math.cos(newinclination);
-        var newZ = radius * Math.sin(newazimuth) * Math.sin(newinclination); 
-        var newY = radius * Math.cos(newazimuth);
-
-        camera.position.x = newX;
-        camera.position.y = newY;
-        camera.position.z = newZ;
-
-        camera.lookAt(pivot[0], pivot[1], pivot[2]);
+        cameraControls.orbit(camera, pivot, mousePositionDelta[1], mousePositionDelta[0]);
         
-        document.getElementById("inclination").innerText = (newinclination * 180 / Math.PI).toFixed(4);
-        document.getElementById("azimuth").innerText = (newazimuth * 180 / Math.PI).toFixed(4);
+        document.getElementById("radius").innerText = cameraControls.getRadius(4);
+        document.getElementById("inclination").innerText = cameraControls.getInclination(4);
+        document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
         document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
         document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
         document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
@@ -77,36 +49,20 @@ document.body.lastChild.addEventListener("drag", (e) => {
 });
 
 document.body.lastChild.addEventListener("dragend", (e) => {
-    cameraControls.orbit(camera, [0.0, 0.0, 0.0], 1.0);
+
 });
 
 document.body.addEventListener("wheel", (e) => {
-    cameraControls.orbit(camera, [0.0, 0.0, 0.0], 1.0);
-    cameraposition = [camera.position.x, camera.position.y, camera.position.z];
-
-    radius = Math.sqrt((pivot[0] - cameraposition[0]) * (pivot[0] - cameraposition[0]) + (pivot[1] - cameraposition[1]) * (pivot[1] - cameraposition[1]) + (pivot[2] - cameraposition[2]) * (pivot[2] - cameraposition[2]));
-    inclination = Math.atan(Math.sqrt((pivot[0] - cameraposition[0]) * (pivot[0] - cameraposition[0]) + (pivot[2] - cameraposition[2]) * (pivot[2] - cameraposition[2])) / cameraposition[1]);
-    azimuth = Math.atan(cameraposition[2] / cameraposition[0]);
-
-    if (e.deltaY < 0) {
-        radius -= 0.1;
+    if(e.deltaY < 0){
+        cameraControls.zoom(camera, pivot, -0.1);
     }
-    else {
-        radius += 0.1;
+    else{
+        cameraControls.zoom(camera, pivot, 0.1);
     }
-    
-    var newX = radius * Math.sin(inclination) * Math.cos(azimuth);
-    var newZ = radius * Math.sin(inclination) * Math.sin(azimuth); 
-    var newY = radius * Math.cos(inclination);
 
-    camera.position.x = newX;
-    camera.position.y = newY;
-    camera.position.z = newZ;
-
-    camera.lookAt(pivot[0], pivot[1], pivot[2]);
-    
-    document.getElementById("inclination").innerText = (inclination * 180 / Math.PI).toFixed(4);
-    document.getElementById("azimuth").innerText = (azimuth * 180 / Math.PI).toFixed(4);
+    document.getElementById("radius").innerText = cameraControls.getRadius(4);
+    document.getElementById("inclination").innerText = cameraControls.getInclination(4);
+    document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
     document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
     document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
     document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
@@ -190,12 +146,20 @@ scene.add(light);
 
 // Code
     // Setup
-    camera.position.x = 2;
+    camera.position.x = 1;
     camera.position.y = 1;
     camera.position.z = 1;
     camera.lookAt(0, 0, 0);
 
-    cameraControls.orbit(camera, [0.0, 0.0, 0.0], 1.0);
+    cameraControls.orbit(camera, pivot, 0.0, 0.0);
+
+    document.getElementById("radius").innerText = cameraControls.getRadius(4);
+    document.getElementById("inclination").innerText = cameraControls.getInclination(4);
+    document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
+    document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
+    document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
+    document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
+
     // Loop
     function Loop() {
         stats.begin();
