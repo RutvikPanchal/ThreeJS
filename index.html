@@ -16,10 +16,10 @@
 <body onresize="onWindowResize()">
     <div style="display:flex; flex-direction:column; position:absolute; right:0; margin:8px;">
         <div style="display: flex;">
-            <button>Left</button>
-            <button>Right</button>
-            <button>Up</button>
-            <button>Down</button>
+            <button onclick="orbitFront()">Front</button>
+            <button onclick="orbitBack()">Back</button>
+            <button onclick="orbitTop()">Top</button>
+            <button onclick="orbitBottom()">Bottom</button>
         </div>
         <div class="info">
             <div>Radius&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;<span id="radius"></span></div>

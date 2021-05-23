@@ -69,15 +69,61 @@ document.body.addEventListener("wheel", (e) => {
 });
 
 // Functions
+function orbitFront(){
 
+}
+
+function orbitBack(){
+
+}
+
+function orbitTop(){
+
+}
+
+function orbitBottom(){
+
+}
 
 // Materials
-const material = new THREE.MeshPhongMaterial({
+const simpleMaterial = new THREE.MeshPhongMaterial({
     side: THREE.DoubleSide,
     vertexColors: true
 });
 
+const dotMaterial = new THREE.PointsMaterial({
+    size: 4,
+    sizeAttenuation: false
+});
+
+const lineMaterial = new THREE.LineBasicMaterial({
+    vertexColors: true
+});
+
 // Geometry Construction
+const originGeometry = new THREE.BufferGeometry();
+const originPositions = [];
+const originIndices = [];
+const originColors = [];
+
+originPositions.push(0.0, 0.0, 0.0);
+originPositions.push(1.0, 0.0, 0.0);
+originPositions.push(0.0, 1.0, 0.0);
+originPositions.push(0.0, 0.0, 1.0);
+
+originIndices.push(0, 1);
+originIndices.push(0, 3);
+originIndices.push(0, 2);
+
+originColors.push(1.0, 1.0, 1.0);
+originColors.push(0.0, 1.0, 0.0);
+originColors.push(0.0, 0.0, 1.0);
+originColors.push(1.0, 0.0, 0.0);
+
+originGeometry.setIndex(originIndices);
+originGeometry.setAttribute('position', new THREE.Float32BufferAttribute(originPositions, 3));
+originGeometry.setAttribute('color', new THREE.Float32BufferAttribute(originColors, 3));
+
 const geometry = new THREE.BufferGeometry();
 const indices = [];
 const vertices = [];
@@ -85,15 +131,14 @@ const normals = [];
 const colors = [];
 
 // generate vertices
-vertices.push(-0.5, 0.0, 0.0);
-vertices.push(0.5, 0.0, 0.0);
-vertices.push(0.0, 0.7, 0.0);
-
-vertices.push(0.0, 0.0, -0.5);
-vertices.push(0.0, 0.0, 0.5);
-vertices.push(0.0, 0.7, 0.0);
-
 vertices.push(0.0, 0.0, 0.0);
+
+vertices.push(0.5, 0.0, 0.0);
+vertices.push(0.0, 0.0, 0.5);
+vertices.push(0.0, 0.5, 0.0);
+
+vertices.push(-0.5, 0.0, 0.0);
+vertices.push(0.0, 0.0, -0.5);
 
 // generate normals
 normals.push(0, 0, 1);
@@ -107,25 +152,26 @@ normals.push(0, 0, 1);
 normals.push(0, 0, 1);
 
 // generate indices
-indices.push(0, 2, 6);
-indices.push(1, 2, 6);
-indices.push(3, 6, 5);
-indices.push(4, 6, 5);
-indices.push(6, 1, 4);
-indices.push(6, 1, 3);
-indices.push(6, 0, 4);
-indices.push(6, 0, 3);
+indices.push(0, 1, 2);
+indices.push(0, 2, 3);
+indices.push(0, 1, 3);
+
+indices.push(0, 4, 5);
+indices.push(0, 1, 5);
+indices.push(0, 2, 4);
+
+indices.push(0, 3, 4);
+indices.push(0, 3, 5);
 
 // generate colors
-colors.push(1.0, 0.0, 0.0);
-colors.push(0.0, 1.0, 0.0);
-colors.push(0.0, 0.0, 0.1);
-
-colors.push(0, 1.0, 1.0);
-colors.push(1.0, 0.0, 1.0);
-colors.push(1.0, 1.0, 0.0);
-
 colors.push(1.0, 1.0, 1.0);
+
+colors.push(0.0, 1.0, 0.0);
+colors.push(1.0, 0.0, 0.0);
+colors.push(0.0, 0.0, 1.0);
+
+colors.push(0.0, 1.0, 1.0);
+colors.push(1.0, 0.0, 1.0);
 
 geometry.setIndex(indices);
 geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
@@ -133,7 +179,9 @@ geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
 geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
 // Objects
-const mesh = new THREE.Mesh(geometry, material);
+const origin = new THREE.Line(originGeometry, lineMaterial);
+const mesh = new THREE.Mesh(geometry, simpleMaterial);
+const pointsCloud = new THREE.Points(geometry, dotMaterial);
 
 // Scene
 const scene = new THREE.Scene();
@@ -143,6 +191,8 @@ const light = new THREE.HemisphereLight();
 scene.background = new THREE.Color(0x2e2e2e);
 scene.add(mesh);
 scene.add(light);
+scene.add(origin);
+scene.add(pointsCloud);
 
 // Code
     // Setup
