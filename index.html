@@ -14,22 +14,30 @@
     <link href="style.css" rel="stylesheet" />
 </head>
 <body onresize="onWindowResize()">
-    <div style="display:flex; flex-direction:column; position:absolute; right:0; margin:8px;">
-        <div style="display: flex;">
-            <button onclick="orbitFront()">Front</button>
-            <button onclick="orbitBack()">Back</button>
-            <button onclick="orbitTop()">Top</button>
-            <button onclick="orbitBottom()">Bottom</button>
+    <div style="display:flex; position:absolute; right:0; width: 92%;">
+        <div style="color:#FFFFFF; font-size: 48px; font-weight: 700; flex-grow:6;">
+            Fibonnaci Sphere
         </div>
-        <div class="info">
-            <div>Radius&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;<span id="radius"></span></div>
-            <div>Inclination&nbsp;:&nbsp;<span id="inclination"></span></div>
-            <div>Azimuth&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;<span id="azimuth"></span></div>
-        </div>
-        <div class="info">
-            <div>CamX :&nbsp;<span id="CamX"></span></div>
-            <div>CamY :&nbsp;<span id="CamY"></span></div>
-            <div>CamZ :&nbsp;<span id="CamZ"></span></div>
+        <div style="display:flex; flex-direction:column; flex-grow:1; max-width: 240px; margin:8px;">
+            <div style="display: flex;">
+                <button onclick="orbitFront()">Front</button>
+                <button onclick="orbitBack()">Back</button>
+                <button onclick="orbitTop()">Top</button>
+                <button onclick="orbitBottom()">Bottom</button>
+            </div>
+            <div class="info">
+                <div>Radius&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<span id="radius"></span></div>
+                <div>Inclination&nbsp;:&nbsp;&nbsp;<span id="inclination"></span></div>
+                <div>Azimuth&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<span id="azimuth"></span></div>
+            </div>
+            <div class="info">
+                <div>CamX :&nbsp;<span id="CamX"></span></div>
+                <div>CamY :&nbsp;<span id="CamY"></span></div>
+                <div>CamZ :&nbsp;<span id="CamZ"></span></div>
+            </div>
+            <div class="info">
+                <input type="range" min="0" max="1" step="0.0001" value ="0" oninput="changeFactor(this)" style="width:100%; margin:10px 0px 0px 0px;">
+            </div>
         </div>
     </div>
 
@@ -38,6 +46,7 @@
     <script src="https://cdn.jsdelivr.net/npm/stats-js@1.0.1/build/stats.min.js" integrity="sha256-1R846tTinE7e93sFWMOwu+83z2qr9y0vOB2w5FkYJxQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="ThreeJS/CameraControls.js"></script>
+    <script src="ThreeJS/ThreeObjects.js"></script>
     <script src="ThreeJS/Engine.js"></script>
 </body>
 </html>

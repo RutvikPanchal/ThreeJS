@@ -85,6 +85,23 @@ function orbitBottom(){
 
 }
 
+function changeFactor(obj){
+    let factor = obj.value * 1;
+    let vertices = sphere.geometry.attributes.position.array;
+
+    for(let i = 0; i < vertices.length; i += 3){
+        let x = sphereVertices[i];
+        let z = sphereVertices[i + 1];
+        let y = sphereVertices[i + 2];
+
+        vertices[i] = ((x * (1 - factor)) + factor * (2 * x / (1 + x * x + y * y)));
+        vertices[i + 2] = ((y * (1 - factor)) + factor * (2 * y / (1 + x * x + y * y)));
+        vertices[i + 1] = ((z * (1 - factor)) + factor * ((-1 + x * x + y * y) / (1 + x * x + y * y)));
+    }
+
+    sphere.geometry.attributes.position.needsUpdate = true;
+}
+
 // Materials
 const simpleMaterial = new THREE.MeshPhongMaterial({
     side: THREE.DoubleSide,
@@ -92,7 +109,7 @@ const simpleMaterial = new THREE.MeshPhongMaterial({
 });
 
 const dotMaterial = new THREE.PointsMaterial({
-    size: 4,
+    size: 2,
     sizeAttenuation: false
 });
 
@@ -101,6 +118,40 @@ const lineMaterial = new THREE.LineBasicMaterial({
 });
 
 // Geometry Construction
+const sphereGeometry = new THREE.BufferGeometry();
+const sphereVertices = [];
+const sphereNormals = [];
+const sphereIndices = [];
+const sphereColors = [];
+
+// generate vertices
+vertSize = 1000
+
+for(let i = 0; i < vertSize; i++){
+
+    let dist = i / (vertSize - 1.0);
+    let azimuth = 2.0 * Math.PI * 1.61803398875 * i;
+    let inclination = Math.acos(1.0 - 2.0 * dist);
+
+    let x = Math.sin(inclination) * Math.sin(azimuth);
+    let y = Math.sin(inclination) * Math.cos(azimuth);
+    let z = Math.cos(inclination);
+
+    if(z == 1){
+        z = 0.99;
+    }
+
+    sphereVertices.push((x / (1.0 - z)), 0.0, (y / (1.0 - z)));
+
+    sphereColors.push(Math.random(), Math.random(), Math.random());
+    sphereNormals.push(0, 0, 0);
+}
+
+//sphereGeometry.setIndex(sphereIndices);
+sphereGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sphereVertices, 3));
+sphereGeometry.setAttribute('normal', new THREE.Float32BufferAttribute(sphereNormals, 3));
+sphereGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sphereColors, 3));
+
 const originGeometry = new THREE.BufferGeometry();
 const originPositions = [];
 const originIndices = [];
@@ -182,6 +233,7 @@ geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 const origin = new THREE.Line(originGeometry, lineMaterial);
 const mesh = new THREE.Mesh(geometry, simpleMaterial);
 const pointsCloud = new THREE.Points(geometry, dotMaterial);
+const sphere = new THREE.Points(sphereGeometry, dotMaterial);
 
 // Scene
 const scene = new THREE.Scene();
@@ -192,13 +244,14 @@ scene.background = new THREE.Color(0x2e2e2e);
 scene.add(mesh);
 scene.add(light);
 scene.add(origin);
+scene.add(sphere);
 scene.add(pointsCloud);
 
 // Code
     // Setup
     camera.position.x = 1;
     camera.position.y = 1;
-    camera.position.z = 1;
+    camera.position.z = 1.6;
     camera.lookAt(0, 0, 0);
 
     cameraControls.orbit(camera, pivot, 0.0, 0.0);
