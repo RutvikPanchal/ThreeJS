@@ -38,6 +38,9 @@ canvas.addEventListener("mousemove", (e) => {
             count++;
         }
         if(e.x != 0 && e.y != 0){
+            autoRotate = false;
+            document.getElementById("autoRotate").checked = false;
+
             canvas.style.cursor = "move";
 
             var mousePositionDelta = [(e.x - pivotMousePosition[0]) * 0.01, (pivotMousePosition[1] - e.y) * 0.01];
@@ -61,7 +64,6 @@ canvas.addEventListener("mouseup", (e) => {
 });
 
 canvas.addEventListener("touchstart", (e) => {
-    console.log(e.touches);
     count = 0;
 });
 
@@ -71,6 +73,9 @@ canvas.addEventListener("touchmove", (e) => {
         count++;
     }
     if(e.x != 0 && e.y != 0){
+        autoRotate = false;
+        document.getElementById("autoRotate").checked = false;
+
         var mousePositionDelta = [(e.changedTouches[0].clientX - pivotMousePosition[0]) * 0.01, (pivotMousePosition[1] - e.changedTouches[0].clientY) * 0.01];
         pivotMousePosition = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
@@ -118,6 +123,16 @@ function orbitBottom(){
 
 }
 
+var autoRotate = true;
+function autoOrbit(obj){
+    if(obj.checked){
+        autoRotate = true;
+    }
+    else{
+        autoRotate = false;
+    }
+}
+
 let holeFlag = true;
 function changeFactor(obj){
     let factor = obj.value;
@@ -129,8 +144,8 @@ function changeFactor(obj){
         let y = sphereVertices[i + 2];
 
         vertices[i] = ((x * (1 - factor)) + factor * (2 * x / (1 + x * x + y * y)));
-        vertices[i + 2] = ((y * (1 - factor)) + factor * (2 * y / (1 + x * x + y * y)));
         vertices[i + 1] = ((z * (1 - factor)) + factor * ((-1 + x * x + y * y) / (1 + x * x + y * y)));
+        vertices[i + 2] = ((y * (1 - factor)) + factor * (2 * y / (1 + x * x + y * y)));
     }
 
     if(obj.value > 0.995 && holeFlag){
@@ -152,7 +167,7 @@ function changeFactor(obj){
         
         holeFlag = true;
     }
-
+    
     sphere.geometry.attributes.position.needsUpdate = true;
 }
 
@@ -169,6 +184,9 @@ function chageVertSize(obj){
     vertSize = obj.value;
 
     let vertices = []
+    sphereVertices = [];
+    sphereIndices = [];
+
     let normals = []
     let colors = []
     let indices = [];
@@ -189,12 +207,14 @@ function chageVertSize(obj){
         }
     
         vertices.push((x / (1.0 - z)), 0.0, (y / (1.0 - z)));
+        sphereVertices.push((x / (1.0 - z)), 0.0, (y / (1.0 - z)));
+        
         delaunayVerts.push((x / (1.0 - z)), (y / (1.0 - z)));
         normals.push(0.0, 0.0, 1.0);
         colors.push(0.3, 0.3, 0.3);
     }
 
-    let factor = 1;
+    let factor = document.getElementById("spherificationSlider").value;
 
     for(let i = 0; i < vertices.length; i += 3){
         let x = vertices[i];
@@ -209,12 +229,21 @@ function chageVertSize(obj){
     delaunay = new Delaunator(delaunayVerts);
     for(let i = 0;i < delaunay.triangles.length; i++){
         indices.push(delaunay.triangles[i]);
+        sphereIndices.push(delaunay.triangles[i]);
     }
 
-    if(obj.value > 1){
+    if(factor > 0.995){
         indices.push(1, 2, 3);
         indices.push(1, 2, 4);
         indices.push(2, 5, 3);
+        
+        sphereIndices.push(1, 2, 3);
+        sphereIndices.push(1, 2, 4);
+        sphereIndices.push(2, 5, 3);
+
+        sphere.geometry.setIndex(sphereIndices);
+        
+        holeFlag = false;
     }
 
     sphere.geometry.setIndex(indices);
@@ -258,7 +287,7 @@ var sphereColors = [];
 
 
 // generate vertices
-var vertSize = 10000;
+var vertSize = 1000;
 
 for(let i = 0; i < vertSize; i++){
 
@@ -298,9 +327,9 @@ const originIndices = [];
 const originColors = [];
 
 originPositions.push(0.0, 0.0, 0.0);
-originPositions.push(1.0, 0.0, 0.0);
-originPositions.push(0.0, 1.0, 0.0);
-originPositions.push(0.0, 0.0, 1.0);
+originPositions.push(1.2, 0.0, 0.0);
+originPositions.push(0.0, 1.2, 0.0);
+originPositions.push(0.0, 0.0, 1.2);
 
 originIndices.push(0, 1);
 originIndices.push(0, 3);
@@ -382,24 +411,22 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const light = new THREE.HemisphereLight();
 
 scene.background = new THREE.Color(0x2e2e2e);
-scene.add(mesh);
+//scene.add(mesh);
+//scene.add(pointsCloud);
 scene.add(light);
 scene.add(origin);
 scene.add(sphere);
-scene.add(pointsCloud);
 scene.add(spherePoints);
 
 // Code
     // Setup
-    camera.position.x = 1;
-    camera.position.y = 2;
-    camera.position.z = 2;
+    camera.position.x = 1.8;
+    camera.position.y = 1.8;
+    camera.position.z = 1.8;
     camera.lookAt(0, 0, 0);
 
-    cameraControls.orbit(camera, pivot, 0.0, 0.0);
-
     {
-        let factor = 1;
+        let factor = document.getElementById("spherificationSlider").value;
         let vertices = sphere.geometry.attributes.position.array;
 
         for(let i = 0; i < vertices.length; i += 3){
@@ -435,6 +462,8 @@ scene.add(spherePoints);
         sphere.geometry.attributes.position.needsUpdate = true;
     }
 
+    cameraControls.orbit(camera, pivot, 0.0, 0.0);
+
     document.getElementById("radius").innerText = cameraControls.getRadius(4);
     document.getElementById("inclination").innerText = cameraControls.getInclination(4);
     document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
@@ -442,9 +471,16 @@ scene.add(spherePoints);
     document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
     document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
 
+    const clock = new THREE.Clock();
+    clock.start();
+
     // Loop
     function Loop() {
         stats.begin();
+
+        if(autoRotate){
+            cameraControls.orbit(camera, pivot, 0.0, 0.0025);
+        }
 
         renderer.render(scene, camera);
         requestAnimationFrame(Loop);

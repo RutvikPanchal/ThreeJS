@@ -15,8 +15,12 @@
 </head>
 <body onresize="onWindowResize()">
     <div style="display:flex; position:absolute; right:0; width:calc(100% - 80px);">
-        <div style="color:#FFFFFF; font-size: 48px; font-weight: 700; margin-left:10px; flex-grow:6;">
-            Fibonnacci Sphere
+        <div style="color:#FFFFFF; margin-left:10px; flex-grow:6;">
+            <div style="font-size: 48px; font-weight: 700;">Fibonnacci Sphere</div>
+            <div style="margin-top:10px;">Vertices</div>
+                <input class="slider" style="width:95%" type="range" min="10" max="1000" step="1" value = "1000" id="vertSize" oninput="chageVertSize(this)">
+            <span style="margin-top: 10px; display: inline-block;">Auto-Rotate</span>
+                <input type="checkbox" id="autoRotate" checked onchange="autoOrbit(this)">
         </div>
         <div style="display:flex; flex-direction:column; flex-grow:1; max-width: 240px; margin:8px;">
             <div style="display: flex;">
@@ -36,10 +40,8 @@
                 <div>CamZ :&nbsp;<span id="CamZ"></span></div>
             </div>
             <div class="info" style="margin-top:20px;">
-                <div>Vertices</div>
-                    <input class="slider" type="range" min="10" max="10000" step="1" value = "10000" id="vertSize" oninput="chageVertSize(this)">
-                <div style="margin-top:8px;">Spherification</div>
-                    <input class="slider" type="range" min="0" max="1" step="0.0001" value ="1" oninput="changeFactor(this)">
+                <div>Spherification</div>
+                    <input class="slider" type="range" min="0" max="1" step="0.0001" value ="1" id="spherificationSlider" oninput="changeFactor(this)">
                 <div style="margin-top:8px;">Zoom</div>
                     <input class="slider" type="range" min="0" max="0.1" step="0.0001" id="zDelta" oninput="changeZoom(this)">
             </div>
