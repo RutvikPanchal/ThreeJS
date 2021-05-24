@@ -87,19 +87,44 @@ canvas.addEventListener("wheel", (e) => {
 
 // Functions
 function orbitFront(){
+    camera.position.z = 2;
+    camera.position.x = 0;
+    camera.position.y = 0;
 
+    camera.lookAt(0, 0, 0);
+    autoRotate = false;
+    document.getElementById("autoRotate").checked = false;
 }
 
 function orbitBack(){
+    camera.position.z = -2;
+    camera.position.x = 0;
+    camera.position.y = 0;
+
+    camera.lookAt(0, 0, 0);
+    autoRotate = false;
+    document.getElementById("autoRotate").checked = false;
 
 }
 
 function orbitTop(){
+    camera.position.z = 0.0001;
+    camera.position.x = 0.0001;
+    camera.position.y = 2;
 
+    camera.lookAt(0, 0, 0);
+    autoRotate = false;
+    document.getElementById("autoRotate").checked = false;
 }
 
 function orbitBottom(){
+    camera.position.z = 0;
+    camera.position.x = 0;
+    camera.position.y = -2;
 
+    camera.lookAt(0, 0, 0);
+    autoRotate = false;
+    document.getElementById("autoRotate").checked = false;
 }
 
 var autoRotate = true;
@@ -253,7 +278,7 @@ const dotMaterial = new THREE.PointsMaterial({
 });
 
 const lineMaterial = new THREE.LineBasicMaterial({
-    vertexColors: true
+    vertexColors: true,
 });
 
 // Geometry Construction
@@ -315,9 +340,9 @@ originIndices.push(0, 3);
 originIndices.push(0, 2);
 
 originColors.push(1.0, 1.0, 1.0);
+originColors.push(1.0, 0.0, 0.0);
 originColors.push(0.0, 1.0, 0.0);
 originColors.push(0.0, 0.0, 1.0);
-originColors.push(1.0, 0.0, 0.0);
 
 originGeometry.setIndex(originIndices);
 originGeometry.setAttribute('position', new THREE.Float32BufferAttribute(originPositions, 3));
@@ -451,7 +476,7 @@ scene.add(spherePoints);
         stats.begin();
 
         if(autoRotate){
-            cameraControls.orbit(camera, pivot, 0.0, 0.0025);
+            cameraControls.orbit(camera, pivot, 0.0, clock.getDelta() * 0.5);
         }
 
         document.getElementById("radius").innerText = cameraControls.getRadius(4);
