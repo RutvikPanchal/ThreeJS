@@ -47,13 +47,6 @@ canvas.addEventListener("mousemove", (e) => {
             pivotMousePosition = [e.x, e.y];
     
             cameraControls.orbit(camera, pivot, mousePositionDelta[1], mousePositionDelta[0]);
-            
-            document.getElementById("radius").innerText = cameraControls.getRadius(4);
-            document.getElementById("inclination").innerText = cameraControls.getInclination(4);
-            document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
-            document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
-            document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
-            document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
         }
     }
 });
@@ -80,13 +73,6 @@ canvas.addEventListener("touchmove", (e) => {
         pivotMousePosition = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
         cameraControls.orbit(camera, pivot, mousePositionDelta[1], mousePositionDelta[0]);
-        
-        document.getElementById("radius").innerText = cameraControls.getRadius(4);
-        document.getElementById("inclination").innerText = cameraControls.getInclination(4);
-        document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
-        document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
-        document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
-        document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
     }
 });
 
@@ -97,13 +83,6 @@ canvas.addEventListener("wheel", (e) => {
     else{
         cameraControls.zoom(camera, pivot, 0.1);
     }
-
-    document.getElementById("radius").innerText = cameraControls.getRadius(4);
-    document.getElementById("inclination").innerText = cameraControls.getInclination(4);
-    document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
-    document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
-    document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
-    document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
 });
 
 // Functions
@@ -464,13 +443,6 @@ scene.add(spherePoints);
 
     cameraControls.orbit(camera, pivot, 0.0, 0.0);
 
-    document.getElementById("radius").innerText = cameraControls.getRadius(4);
-    document.getElementById("inclination").innerText = cameraControls.getInclination(4);
-    document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
-    document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
-    document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
-    document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
-
     const clock = new THREE.Clock();
     clock.start();
 
@@ -481,6 +453,13 @@ scene.add(spherePoints);
         if(autoRotate){
             cameraControls.orbit(camera, pivot, 0.0, 0.0025);
         }
+
+        document.getElementById("radius").innerText = cameraControls.getRadius(4);
+        document.getElementById("inclination").innerText = cameraControls.getInclination(4);
+        document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
+        document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
+        document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
+        document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
 
         renderer.render(scene, camera);
         requestAnimationFrame(Loop);
