@@ -13,3 +13,13 @@ button{
     font-size: small;
     margin-top: 8px;
 }
+
+.slider{
+   width:100%;
+   margin:10px 0px 0px 0px;
+   cursor:grab;
+}
+
+.slider:active{
+    cursor:grabbing;
+}

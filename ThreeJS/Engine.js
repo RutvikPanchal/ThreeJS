@@ -17,25 +17,62 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-document.body.lastChild.draggable = true;
-
 var count = 0;
+var dragged = false;
 var pivot = [0.0, 0.0, 0.0];
 var pivotMousePosition = [0, 0];
 
-document.body.lastChild.addEventListener("dragstart", (e) => {
+var canvas = document.body.lastChild;
+
+canvas.addEventListener("mousedown", (e) => {
     count = 0;
-    e.dataTransfer.setDragImage(document.getElementById("dragme"), 0, 0);
+    if(e.which == 1){
+        dragged = true;
+    }
 });
 
-document.body.lastChild.addEventListener("drag", (e) => {
+canvas.addEventListener("mousemove", (e) => {
+    if(dragged){
+        if(count < 1){
+            pivotMousePosition = [e.x, e.y];
+            count++;
+        }
+        if(e.x != 0 && e.y != 0){
+            canvas.style.cursor = "move";
+
+            var mousePositionDelta = [(e.x - pivotMousePosition[0]) * 0.01, (pivotMousePosition[1] - e.y) * 0.01];
+            pivotMousePosition = [e.x, e.y];
+    
+            cameraControls.orbit(camera, pivot, mousePositionDelta[1], mousePositionDelta[0]);
+            
+            document.getElementById("radius").innerText = cameraControls.getRadius(4);
+            document.getElementById("inclination").innerText = cameraControls.getInclination(4);
+            document.getElementById("azimuth").innerText = cameraControls.getAzimuth(4);
+            document.getElementById("CamX").innerText = (camera.position.x).toFixed(4);
+            document.getElementById("CamY").innerText = (camera.position.y).toFixed(4);
+            document.getElementById("CamZ").innerText = (camera.position.z).toFixed(4);
+        }
+    }
+});
+
+canvas.addEventListener("mouseup", (e) => {
+    dragged = false;
+    canvas.style.cursor = "default";
+});
+
+canvas.addEventListener("touchstart", (e) => {
+    console.log(e.touches);
+    count = 0;
+});
+
+canvas.addEventListener("touchmove", (e) => {
     if(count < 1){
-        pivotMousePosition = [e.x, e.y];
+        pivotMousePosition = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
         count++;
     }
     if(e.x != 0 && e.y != 0){
-        var mousePositionDelta = [(e.x - pivotMousePosition[0]) * 0.01, (pivotMousePosition[1] - e.y) * 0.01];
-        pivotMousePosition = [e.x, e.y];
+        var mousePositionDelta = [(e.changedTouches[0].clientX - pivotMousePosition[0]) * 0.01, (pivotMousePosition[1] - e.changedTouches[0].clientY) * 0.01];
+        pivotMousePosition = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
         cameraControls.orbit(camera, pivot, mousePositionDelta[1], mousePositionDelta[0]);
         
@@ -48,11 +85,7 @@ document.body.lastChild.addEventListener("drag", (e) => {
     }
 });
 
-document.body.lastChild.addEventListener("dragend", (e) => {
-
-});
-
-document.body.addEventListener("wheel", (e) => {
+canvas.addEventListener("wheel", (e) => {
     if(e.deltaY < 0){
         cameraControls.zoom(camera, pivot, -0.1);
     }
@@ -106,6 +139,13 @@ function changeFactor(obj){
 const simpleMaterial = new THREE.MeshPhongMaterial({
     side: THREE.DoubleSide,
     vertexColors: true
+});
+
+const simpleTranslucentMaterial = new THREE.MeshPhongMaterial({
+    side: THREE.DoubleSide,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.5,
 });
 
 const dotMaterial = new THREE.PointsMaterial({
@@ -215,7 +255,7 @@ indices.push(0, 3, 4);
 indices.push(0, 3, 5);
 
 // generate colors
-colors.push(1.0, 1.0, 1.0);
+colors.push(0.0, 0.0, 0.0);
 
 colors.push(0.0, 1.0, 0.0);
 colors.push(1.0, 0.0, 0.0);
