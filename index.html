@@ -36,8 +36,10 @@
                 <div>CamZ :&nbsp;<span id="CamZ"></span></div>
             </div>
             <div class="info" style="margin-top:20px;">
-                <div>Spherification</div>
-                    <input class="slider" type="range" min="0" max="1" step="0.0001" value ="0" oninput="changeFactor(this)">
+                <div>Vertices</div>
+                    <input class="slider" type="range" min="10" max="10000" step="1" value = "10000" id="vertSize" oninput="chageVertSize(this)">
+                <div style="margin-top:8px;">Spherification</div>
+                    <input class="slider" type="range" min="0" max="1" step="0.0001" value ="1" oninput="changeFactor(this)">
                 <div style="margin-top:8px;">Zoom</div>
                     <input class="slider" type="range" min="0" max="0.1" step="0.0001" id="zDelta" oninput="changeZoom(this)">
             </div>
@@ -45,8 +47,10 @@
     </div>
 
     <div id="dragme" style="display:none;"></div>
-
+    
+    <script src="https://unpkg.com/delaunator@5.0.0/delaunator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stats-js@1.0.1/build/stats.min.js" integrity="sha256-1R846tTinE7e93sFWMOwu+83z2qr9y0vOB2w5FkYJxQ=" crossorigin="anonymous"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="ThreeJS/CameraControls.js"></script>
     <script src="ThreeJS/ThreeObjects.js"></script>
