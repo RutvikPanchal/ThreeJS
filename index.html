@@ -14,12 +14,13 @@
     <link href="style.css" rel="stylesheet" />
 </head>
 <body onresize="onWindowResize()">
-    <div style="display:flex; position:absolute; right:0; width:calc(100% - 80px);">
-        <div style="color:#FFFFFF; margin-left:10px; flex-grow:6;">
-            <div style="font-size: 48px; font-weight: 700;">Fibonnacci Sphere</div>
+    <div style="display:flex; position:absolute; right:0; width:100%">
+        <div style="color:#FFFFFF; flex-grow:6; padding-left: 8px;">
+            <div style="font-size: 48px; font-weight: 700; margin-left: 80px;">Fibonnacci Sphere</div>
             <div style="margin-top:10px;">Vertices</div>
-                <input class="slider" style="width:95%" type="range" min="10" max="1000" step="1" value = "1000" id="vertSize" oninput="chageVertSize(this)">
-            <span style="margin-top: 10px; display: inline-block;">Auto-Rotate</span>
+                <input class="slider" style="width:95%; max-width:560px;" type="range" min="10" max="1000" step="1" value = "1000" id="vertSize" oninput="chageVertSize(this)">
+            <br />
+            <div style="margin-top: 10px; display: inline-block;">Auto-Rotate</div>
                 <input type="checkbox" id="autoRotate" checked onchange="autoOrbit(this)">
         </div>
         <div style="display:flex; flex-direction:column; flex-grow:1; max-width: 240px; margin:8px;">
