@@ -35,8 +35,11 @@
                 <div>CamY :&nbsp;<span id="CamY"></span></div>
                 <div>CamZ :&nbsp;<span id="CamZ"></span></div>
             </div>
-            <div class="info">
-                <input class="slider" type="range" min="0" max="1" step="0.0001" value ="0" oninput="changeFactor(this)">
+            <div class="info" style="margin-top:20px;">
+                <div>Spherification</div>
+                    <input class="slider" type="range" min="0" max="1" step="0.0001" value ="0" oninput="changeFactor(this)">
+                <div style="margin-top:8px;">Zoom</div>
+                    <input class="slider" type="range" min="0" max="0.1" step="0.0001" id="zDelta" oninput="changeZoom(this)">
             </div>
         </div>
     </div>

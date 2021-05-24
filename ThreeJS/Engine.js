@@ -135,6 +135,15 @@ function changeFactor(obj){
     sphere.geometry.attributes.position.needsUpdate = true;
 }
 
+var zDelta = document.getElementById("zDelta");
+function changeZoom(obj){
+    zDelta = obj.value - zDelta;
+    if(zDelta){
+        cameraControls.zoom(camera, pivot, zDelta * -50);
+    }
+    zDelta = obj.value;
+}
+
 // Materials
 const simpleMaterial = new THREE.MeshPhongMaterial({
     side: THREE.DoubleSide,
@@ -289,9 +298,9 @@ scene.add(pointsCloud);
 
 // Code
     // Setup
-    camera.position.x = 1;
-    camera.position.y = 1;
-    camera.position.z = 1.6;
+    camera.position.x = 1.5;
+    camera.position.y = 1.5;
+    camera.position.z = 2.2;
     camera.lookAt(0, 0, 0);
 
     cameraControls.orbit(camera, pivot, 0.0, 0.0);
