@@ -57,7 +57,7 @@ export class EngineComponent implements OnInit {
         light.position.set( 16, 24, 16 );
         this.scene.add( light );
 
-        const light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
+        const light1 = new THREE.AmbientLight( 0x404040 );
         this.scene.add( light1 );
 
         const gridHelper = new THREE.GridHelper( 1600, 320, 0x484848, 0x484848 );

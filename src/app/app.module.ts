@@ -6,15 +6,15 @@ import { EngineComponent } from './components/engine/engine.component';
 import { UiComponent } from './components/ui/ui.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    EngineComponent,
-    UiComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        EngineComponent,
+        UiComponent
+    ],
+    imports: [
+        BrowserModule
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
